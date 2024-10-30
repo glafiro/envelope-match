@@ -14,12 +14,15 @@ class EnvelopeFollower
 
     float attack{};
     float release{};
-    float depth{};
+    float amount{};
+ 
+    float sensitivity{ SENSITIVITY };
+    float env{};
 
-    bool isOn{ true };
+    float computeCoefficient(float t);
 
 public:
     void prepare(DSPParameters<float>& params);
     void update(DSPParameters<float>& params);
-    void processBlock(float* const* inputBuffer, int numChannels, int numSamples);
+    float process(float in);
 };

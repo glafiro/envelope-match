@@ -1,5 +1,6 @@
 #include "EnvelopeFollower.h"
 
+
 void EnvelopeFollower::prepare(DSPParameters<float>& params) {
 	sampleRate = params["sampleRate"];
 	blockSize = params["blockSize"];
@@ -9,17 +10,23 @@ void EnvelopeFollower::prepare(DSPParameters<float>& params) {
 }
 
 void EnvelopeFollower::update(DSPParameters<float>& params) {
-	attack = params["attack"];
-	release = params["release"];
-	depth = params["depth"] * 0.01f;
-	isOn = static_cast<bool>(params["isOn"]);
+	attack = computeCoefficient(params["attack"]);
+	release = computeCoefficient(params["release"]);
+	amount = params["amount"] * 0.01f;
 }
 
-void EnvelopeFollower::processBlock(float* const* inputBuffer, int numChannels, int numSamples) {
-	for (int ch = 0; ch < numChannels; ++ch) {
-		for (int s = 0; s < numSamples; ++s) {
-			auto sample = inputBuffer[ch][s];
-			inputBuffer[ch][s] = sample;
-		}
+float EnvelopeFollower::computeCoefficient(float t) {
+	t *= 0.001f;
+	return std::exp(-1.0f / (t * sampleRate));
+}
+
+float EnvelopeFollower::process(float in) {
+	float rectified = std::fabs(in) * sensitivity;
+	if (rectified > env) {
+		env = attack * (env - rectified) + rectified;
 	}
+	else if (rectified < env) {
+		env = release * (env - rectified) + rectified;
+	}
+	return env;
 }

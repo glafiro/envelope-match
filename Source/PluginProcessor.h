@@ -7,16 +7,14 @@
 #include "EnvelopeFollower.h"
 
 enum ParameterNames {
-    ATTACK, RELEASE,
-    DEPTH, IS_ON,
+    ATTACK, RELEASE, AMOUNT,
     PARAM_COUNT
 };
 
 static std::array<std::unique_ptr<IAPVTSParameter>, ParameterNames::PARAM_COUNT> apvtsParameters{
-    std::make_unique<APVTSParameterFloat>("attack",  "Attack",  0.05f),
-    std::make_unique<APVTSParameterFloat>("release", "Release", 0.05f),
-    std::make_unique<APVTSParameterFloat>("depth",   "Depth",   1.0f),
-    std::make_unique<APVTSParameterBool> ("isOn",    "On",      true)
+    std::make_unique<APVTSParameterFloat>("attack",  "atk", 0.05f),
+    std::make_unique<APVTSParameterFloat>("release", "rel", 0.05f),
+    std::make_unique<APVTSParameterFloat>("amount",  "amt", 100.0f),
 };
 
 class EnvelopeMatchAudioProcessor  : 
@@ -24,11 +22,9 @@ class EnvelopeMatchAudioProcessor  :
     public ValueTree::Listener
 {
 public:
-    //==============================================================================
     EnvelopeMatchAudioProcessor();
     ~EnvelopeMatchAudioProcessor() override;
 
-    //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 

@@ -2,19 +2,14 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-EnvelopeMatchAudioProcessor::EnvelopeMatchAudioProcessor()
-#ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
-                     #if ! JucePlugin_IsMidiEffect
-                      #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  juce::AudioChannelSet::stereo(), true)
-                      #endif
-                       .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
-                     #endif
-                       ),
+EnvelopeMatchAudioProcessor::EnvelopeMatchAudioProcessor() : 
+    AudioProcessor(BusesProperties()
+        .withInput("Input", juce::AudioChannelSet::stereo(), true)
+        .withOutput("Output", juce::AudioChannelSet::stereo(), true)
+        .withInput("Sidechain", juce::AudioChannelSet::stereo(), true)
+    ),
     apvts(*this, nullptr, "Parameters", createParameterLayout()),
     envFollower()
-#endif
 {
     apvts.state.addListener(this);
 
@@ -124,26 +119,14 @@ void EnvelopeMatchAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool EnvelopeMatchAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support mono or stereo.
-    // Some plugin hosts, such as certain GarageBand versions, will only
-    // load plugins that support stereo bus layouts.
     if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
      && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo())
         return false;
 
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
         return false;
-   #endif
 
     return true;
-  #endif
 }
 #endif
 
@@ -159,11 +142,14 @@ void EnvelopeMatchAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
         updateDSP();
     }
 
-    envFollower.processBlock(
-        buffer.getArrayOfWritePointers(),
-        buffer.getNumChannels(),
-        buffer.getNumSamples()
-    );
+    auto* bus = getBus(true, 1);
+    if (bus != nullptr && bus->isEnabled()) {        
+
+        auto mainBuffer = getBusBuffer(buffer, false, 0);
+        auto sidechainBuffer = getBusBuffer(buffer, true, 1);
+        
+        
+    }
 }
 
 //==============================================================================
@@ -219,16 +205,10 @@ AudioProcessorValueTreeState::ParameterLayout EnvelopeMatchAudioProcessor::creat
     ));
 
     layout.add(std::make_unique <AudioParameterFloat>(
-        apvtsParameters[ParameterNames::DEPTH]->id,
-        apvtsParameters[ParameterNames::DEPTH]->displayValue,
+        apvtsParameters[ParameterNames::AMOUNT]->id,
+        apvtsParameters[ParameterNames::AMOUNT]->displayValue,
         NormalisableRange<float>{ 0.0f, 100.0f, 0.01f },
-        apvtsParameters[ParameterNames::DEPTH]->getDefault()
-    ));
-
-    layout.add(std::make_unique <AudioParameterBool>(
-        apvtsParameters[ParameterNames::IS_ON]->id,
-        apvtsParameters[ParameterNames::IS_ON]->displayValue,
-        apvtsParameters[ParameterNames::IS_ON]->getDefault()
+        apvtsParameters[ParameterNames::AMOUNT]->getDefault()
     ));
 
     return layout;
