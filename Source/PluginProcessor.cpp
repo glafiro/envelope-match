@@ -213,25 +213,31 @@ AudioProcessorValueTreeState::ParameterLayout EnvelopeMatchAudioProcessor::creat
 {
     AudioProcessorValueTreeState::ParameterLayout layout;
 
+    auto getMsString = [](float value, int) { return String(value) + " ms"; };
+    auto getPctString = [](float value, int) { return String(value) + "%"; };
+
     layout.add(std::make_unique <AudioParameterFloat>(
         apvtsParameters[ParameterNames::ATTACK]->id,
         apvtsParameters[ParameterNames::ATTACK]->displayValue,
-        NormalisableRange<float>{ 0.05f, 10.0f, 0.01f },
-        apvtsParameters[ParameterNames::ATTACK]->getDefault()
+        NormalisableRange<float>{ 0.05f, 10.0f, 0.001f },
+        apvtsParameters[ParameterNames::ATTACK]->getDefault(),
+        AudioParameterFloatAttributes().withStringFromValueFunction(getMsString)
     ));
 
     layout.add(std::make_unique <AudioParameterFloat>(
         apvtsParameters[ParameterNames::RELEASE]->id,
         apvtsParameters[ParameterNames::RELEASE]->displayValue,
-        NormalisableRange<float>{ 0.05f, 10.0f, 0.01f },
-        apvtsParameters[ParameterNames::RELEASE]->getDefault()
+        NormalisableRange<float>{ 0.05f, 10.0f, 0.001f },
+        apvtsParameters[ParameterNames::RELEASE]->getDefault(),
+        AudioParameterFloatAttributes().withStringFromValueFunction(getMsString)
     ));
 
     layout.add(std::make_unique <AudioParameterFloat>(
         apvtsParameters[ParameterNames::AMOUNT]->id,
         apvtsParameters[ParameterNames::AMOUNT]->displayValue,
-        NormalisableRange<float>{ 0.0f, 100.0f, 0.01f },
-        apvtsParameters[ParameterNames::AMOUNT]->getDefault()
+        NormalisableRange<float>{ 0.0f, 100.0f, 0.001f },
+        apvtsParameters[ParameterNames::AMOUNT]->getDefault(),
+        AudioParameterFloatAttributes().withStringFromValueFunction(getPctString)
     ));
 
     return layout;
