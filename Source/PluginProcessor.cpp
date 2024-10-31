@@ -183,8 +183,8 @@ bool EnvelopeMatchAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* EnvelopeMatchAudioProcessor::createEditor()
 {
-    return new GenericAudioProcessorEditor(*this);
-    //return new EnvelopeMatchAudioProcessorEditor (*this);
+    //return new GenericAudioProcessorEditor(*this);
+    return new EnvelopeMatchAudioProcessorEditor (*this);
 }
 
 //==============================================================================

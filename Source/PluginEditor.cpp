@@ -1,40 +1,61 @@
-/*
-  ==============================================================================
-
-    This file contains the basic framework code for a JUCE plugin editor.
-
-  ==============================================================================
-*/
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-//==============================================================================
 EnvelopeMatchAudioProcessorEditor::EnvelopeMatchAudioProcessorEditor (EnvelopeMatchAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    attackSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+    addAndMakeVisible(attackSlider);
+
+    releaseSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+    addAndMakeVisible(releaseSlider);
+
+    amountSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+    addAndMakeVisible(amountSlider);
+
+    setSize (WIDTH, HEIGHT);
 }
 
 EnvelopeMatchAudioProcessorEditor::~EnvelopeMatchAudioProcessorEditor()
 {
 }
 
-//==============================================================================
 void EnvelopeMatchAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void EnvelopeMatchAudioProcessorEditor::resized()
 {
-    // This is generally where you'll want to lay out the positions of any
-    // subcomponents in your editor..
+    auto mainGroupBounds = getBounds()
+        .removeFromBottom(getHeight() * 0.84f)
+        .reduced(getWidth() * 0.01f);
+    
+    auto controlBarBounds = mainGroupBounds
+        .removeFromBottom(mainGroupBounds.getHeight() * 0.2f);
+
+    auto sliderWidth = controlBarBounds.getWidth() * 0.3f;
+    auto sliderHeight = controlBarBounds.getHeight();
+
+    attackSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
+    attackSlider.setSize(sliderWidth, sliderHeight);
+    
+    releaseSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
+    releaseSlider.setSize(sliderWidth, sliderHeight);
+    
+    amountSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
+    amountSlider.setSize(sliderWidth, sliderHeight);
+
+    Grid controlBarGrid;
+
+    controlBarGrid.templateRows    = { Track(Fr(1)) };
+    controlBarGrid.templateColumns = { Track(Fr(1)), Track(Fr(1)), Track(Fr(1)) };
+
+    controlBarGrid.items = {
+        GridItem(attackSlider),
+        GridItem(releaseSlider),
+        GridItem(amountSlider)
+    };
+
+    controlBarGrid.performLayout(controlBarBounds);
 }
