@@ -2,12 +2,14 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
+#include "LookAndFeel.h"
+#include "GuiComponents.h"
 
 using Track = Grid::TrackInfo;
 using Fr = Grid::Fr;
 
-#define WIDTH 400
-#define HEIGHT 225
+#define WIDTH 600
+#define HEIGHT 337
 
 class EnvelopeMatchAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
@@ -21,20 +23,24 @@ public:
 private:
     EnvelopeMatchAudioProcessor& audioProcessor;
 
-    Slider attackSlider;
+    TextSlider attackSlider{"atk"};
     AudioProcessorValueTreeState::SliderAttachment attackAttachment{
-        audioProcessor.apvts, apvtsParameters[ParameterNames::ATTACK]->id.getParamID(), attackSlider
+        audioProcessor.apvts, apvtsParameters[ParameterNames::ATTACK]->id.getParamID(), attackSlider.slider
     };
     
-    Slider releaseSlider;
+    TextSlider releaseSlider{"rel"};
     AudioProcessorValueTreeState::SliderAttachment releaseAttachment{
-        audioProcessor.apvts, apvtsParameters[ParameterNames::RELEASE]->id.getParamID(), releaseSlider
+        audioProcessor.apvts, apvtsParameters[ParameterNames::RELEASE]->id.getParamID(), releaseSlider.slider
     };
     
-    Slider amountSlider;
+    TextSlider amountSlider{"amt"};
     AudioProcessorValueTreeState::SliderAttachment amountAttachment{
-        audioProcessor.apvts, apvtsParameters[ParameterNames::AMOUNT]->id.getParamID(), amountSlider
+        audioProcessor.apvts, apvtsParameters[ParameterNames::AMOUNT]->id.getParamID(), amountSlider.slider
     };
+
+
+    Rectangle<int> displayBounds;
+    Rectangle<int> controlBarBounds;
    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeMatchAudioProcessorEditor)

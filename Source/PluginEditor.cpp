@@ -4,13 +4,9 @@
 EnvelopeMatchAudioProcessorEditor::EnvelopeMatchAudioProcessorEditor (EnvelopeMatchAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p)
 {
-    attackSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
+
     addAndMakeVisible(attackSlider);
-
-    releaseSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
     addAndMakeVisible(releaseSlider);
-
-    amountSlider.setSliderStyle(Slider::SliderStyle::LinearBarVertical);
     addAndMakeVisible(amountSlider);
 
     setSize (WIDTH, HEIGHT);
@@ -22,29 +18,26 @@ EnvelopeMatchAudioProcessorEditor::~EnvelopeMatchAudioProcessorEditor()
 
 void EnvelopeMatchAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(Colors::bgColor);
+
+    int cornerSize = getBounds().getWidth() * 0.01f;
+
+    g.setColour(Colors::displayColor);
+    g.fillRoundedRectangle(displayBounds.toFloat(), cornerSize);
+    
+    g.setColour(Colors::ctrlBarColor);
+    g.fillRoundedRectangle(controlBarBounds.toFloat(), cornerSize);
 }
 
 void EnvelopeMatchAudioProcessorEditor::resized()
 {
-    auto mainGroupBounds = getBounds()
+    displayBounds = getBounds()
         .removeFromBottom(getHeight() * 0.84f)
         .reduced(getWidth() * 0.01f);
     
-    auto controlBarBounds = mainGroupBounds
-        .removeFromBottom(mainGroupBounds.getHeight() * 0.2f);
+    controlBarBounds = displayBounds
+        .removeFromBottom(displayBounds.getHeight() * 0.2f);
 
-    auto sliderWidth = controlBarBounds.getWidth() * 0.3f;
-    auto sliderHeight = controlBarBounds.getHeight();
-
-    attackSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
-    attackSlider.setSize(sliderWidth, sliderHeight);
-    
-    releaseSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
-    releaseSlider.setSize(sliderWidth, sliderHeight);
-    
-    amountSlider.setTextBoxStyle(Slider::TextBoxLeft, false, sliderWidth / 2, sliderHeight);
-    amountSlider.setSize(sliderWidth, sliderHeight);
 
     Grid controlBarGrid;
 
