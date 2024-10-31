@@ -38,9 +38,10 @@ private:
         audioProcessor.apvts, apvtsParameters[ParameterNames::AMOUNT]->id.getParamID(), amountSlider.slider
     };
 
-
     Rectangle<int> displayBounds;
     Rectangle<int> controlBarBounds;
+
+    std::unique_ptr<Drawable> logo = Drawable::createFromImageData(BinaryData::logo_svg, BinaryData::logo_svgSize);
    
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeMatchAudioProcessorEditor)

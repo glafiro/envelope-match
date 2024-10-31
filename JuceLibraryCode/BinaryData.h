@@ -11,8 +11,11 @@ namespace BinaryData
     extern const char*   hack_ttf;
     const int            hack_ttfSize = 383104;
 
+    extern const char*   logo_svg;
+    const int            logo_svgSize = 16802;
+
     // Number of elements in the namedResourceList and originalFileNames arrays.
-    const int namedResourceListSize = 1;
+    const int namedResourceListSize = 2;
 
     // Points to the start of a list of resource names.
     extern const char* namedResourceList[];

@@ -20,6 +20,17 @@ void EnvelopeMatchAudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll(Colors::bgColor);
 
+    // Draw logo
+    float logoHeight = getHeight() * 0.16f;
+    float logoWidth = getWidth() * 0.8f;
+    float xOffset = getWidth() * 0.02f;
+    float yOffset = getHeight() * 0.02f;
+    auto bounds = Rectangle<float>{ xOffset, yOffset, logoWidth, logoHeight };
+    logo->drawWithin(g, bounds, RectanglePlacement::xLeft, 1.0f);
+
+
+    // Draw display
+
     int cornerSize = getBounds().getWidth() * 0.01f;
 
     g.setColour(Colors::displayColor);
