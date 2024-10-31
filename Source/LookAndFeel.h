@@ -34,7 +34,7 @@ public:
         auto textBounds = bounds.withX(x + width * 0.1f);
 
         g.setColour(Colors::bgColor);
-        g.drawRect(bounds, 2.0f);
+        g.drawRect(bounds);
 
         g.setFont(font.withHeight(bounds.getHeight() * 0.7f));
         g.drawText(slider.getTextFromValue(slider.getValue()), textBounds, Justification::centredLeft, false);

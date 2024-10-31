@@ -23,10 +23,22 @@ void EnvelopeMatchAudioProcessorEditor::paint (juce::Graphics& g)
     int cornerSize = getBounds().getWidth() * 0.01f;
 
     g.setColour(Colors::displayColor);
-    g.fillRoundedRectangle(displayBounds.toFloat(), cornerSize);
+    Path topRect;
+    topRect.addRoundedRectangle(
+        displayBounds.getX(), displayBounds.getY(),
+        displayBounds.getWidth(), displayBounds.getHeight(),
+        cornerSize, cornerSize, true, true, false, false
+    );
+    g.fillPath(topRect);
     
+    Path bottomRect;
+    bottomRect.addRoundedRectangle(
+        controlBarBounds.getX(), controlBarBounds.getY(),
+        controlBarBounds.getWidth(), controlBarBounds.getHeight(),
+        cornerSize, cornerSize, false, false, true, true
+    );
     g.setColour(Colors::ctrlBarColor);
-    g.fillRoundedRectangle(controlBarBounds.toFloat(), cornerSize);
+    g.fillPath(bottomRect);
 }
 
 void EnvelopeMatchAudioProcessorEditor::resized()
