@@ -9,7 +9,8 @@ EnvelopeMatchAudioProcessor::EnvelopeMatchAudioProcessor() :
         .withInput("Sidechain", juce::AudioChannelSet::stereo(), true)
     ),
     apvts(*this, nullptr, "Parameters", createParameterLayout()),
-    envFollower()
+    envFollowerL(),
+    envFollowerR()
 {
     apvts.state.addListener(this);
 
@@ -98,7 +99,9 @@ void EnvelopeMatchAudioProcessor::prepareToPlay (double sampleRate, int samplesP
         envelopeParameters.set(param->id.getParamID().toStdString(), param->getDefault());
     }
 
-    envFollower.prepare(envelopeParameters);
+    envFollowerL.prepare(envelopeParameters);
+    envFollowerR.prepare(envelopeParameters);
+    amount.reset(sampleRate, 0.01f);
 }
 
 void EnvelopeMatchAudioProcessor::updateDSP()
@@ -107,7 +110,9 @@ void EnvelopeMatchAudioProcessor::updateDSP()
         envelopeParameters.set(param->id.getParamID().toStdString(), param->get());
     }
 
-    envFollower.update(envelopeParameters);
+    envFollowerL.update(envelopeParameters);
+    envFollowerR.update(envelopeParameters);
+    amount.setTargetValue(apvtsParameters[ParameterNames::AMOUNT]->get());
 }
 
 void EnvelopeMatchAudioProcessor::releaseResources()
@@ -143,12 +148,31 @@ void EnvelopeMatchAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
     }
 
     auto* bus = getBus(true, 1);
-    if (bus != nullptr && bus->isEnabled()) {        
+    if (bus != nullptr && bus->isEnabled()) {     
 
         auto mainBuffer = getBusBuffer(buffer, false, 0);
         auto sidechainBuffer = getBusBuffer(buffer, true, 1);
+
+        auto sideChannels = sidechainBuffer.getNumChannels();
+        auto nSamples = mainBuffer.getNumSamples();
+
+        auto inputSamples = mainBuffer.getArrayOfWritePointers();
+        auto sidechainSamples = sidechainBuffer.getArrayOfReadPointers();
+
         
-        
+        for (int s = 0; s < nSamples; ++s) {
+            auto sampleL = inputSamples[0][s];
+            auto sampleR = inputSamples[1][s];
+
+            auto envL = envFollowerL.process(sidechainSamples[0][s]);
+            auto envR = sideChannels > 1 ? envFollowerR.process(sidechainSamples[1][s]) : envL;
+
+            float t = amount.getNextValue() * 0.01f;
+
+            inputSamples[0][s] = sampleL * (1.0 - t) + (sampleL * envL) * t;
+            inputSamples[1][s] = sampleR * (1.0 - t) + (sampleR * envR) * t;
+        }
+
     }
 }
 

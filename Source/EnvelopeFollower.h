@@ -1,6 +1,6 @@
 #pragma once
 
-#define SENSITIVITY 10.0f
+#define SENSITIVITY 1.0f
 
 #include "Utils.h"
 #include "DSPParameters.h"
@@ -14,9 +14,7 @@ class EnvelopeFollower
 
     float attack{};
     float release{};
-    float amount{};
  
-    float sensitivity{ SENSITIVITY };
     float env{};
 
     float computeCoefficient(float t);

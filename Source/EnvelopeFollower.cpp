@@ -12,7 +12,6 @@ void EnvelopeFollower::prepare(DSPParameters<float>& params) {
 void EnvelopeFollower::update(DSPParameters<float>& params) {
 	attack = computeCoefficient(params["attack"]);
 	release = computeCoefficient(params["release"]);
-	amount = params["amount"] * 0.01f;
 }
 
 float EnvelopeFollower::computeCoefficient(float t) {
@@ -21,7 +20,7 @@ float EnvelopeFollower::computeCoefficient(float t) {
 }
 
 float EnvelopeFollower::process(float in) {
-	float rectified = std::fabs(in) * sensitivity;
+	float rectified = std::fabs(in);
 	if (rectified > env) {
 		env = attack * (env - rectified) + rectified;
 	}

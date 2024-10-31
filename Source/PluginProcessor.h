@@ -53,7 +53,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
-    AudioProcessorValueTreeState     apvts;
+    AudioProcessorValueTreeState apvts;
 
 
 private:
@@ -68,7 +68,11 @@ private:
     DSPParameters<float> envelopeParameters;
     void updateDSP();
 
-    EnvelopeFollower envFollower;
+    EnvelopeFollower envFollowerL;
+    EnvelopeFollower envFollowerR;
+    SmoothedValue<float> amount{
+        apvtsParameters[ParameterNames::AMOUNT]->getDefault()
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeMatchAudioProcessor)
 };
