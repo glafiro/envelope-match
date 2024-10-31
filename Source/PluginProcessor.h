@@ -5,6 +5,10 @@
 #include "DSPParameters.h"
 #include "APVTSParameter.h"
 #include "EnvelopeFollower.h"
+#include "RingQueue.h"
+
+#define DISPLAY_LEN_IN_MS 10.0
+#define MAX_ENV_VALUES 48000
 
 enum ParameterNames {
     ATTACK, RELEASE, AMOUNT,
@@ -54,6 +58,8 @@ public:
     void setStateInformation (const void* data, int sizeInBytes) override;
 
     AudioProcessorValueTreeState apvts;
+    RingQueue envSignal;
+    RingQueue mainSignal;
 
 
 private:
@@ -74,5 +80,7 @@ private:
         apvtsParameters[ParameterNames::AMOUNT]->getDefault()
     };
 
+    vector<float> envValues;
+    vector<float> waveformValues;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeMatchAudioProcessor)
 };

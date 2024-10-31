@@ -42,7 +42,11 @@ private:
     Rectangle<int> controlBarBounds;
 
     std::unique_ptr<Drawable> logo = Drawable::createFromImageData(BinaryData::logo_svg, BinaryData::logo_svgSize);
-   
+
+    SignalDisplay signalDisplay{
+        audioProcessor.envSignal.getSize(), audioProcessor.envSignal.getData(),
+        audioProcessor.mainSignal.getSize(), audioProcessor.mainSignal.getData()
+    };
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EnvelopeMatchAudioProcessorEditor)
 };

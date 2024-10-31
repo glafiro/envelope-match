@@ -8,6 +8,7 @@ EnvelopeMatchAudioProcessorEditor::EnvelopeMatchAudioProcessorEditor (EnvelopeMa
     addAndMakeVisible(attackSlider);
     addAndMakeVisible(releaseSlider);
     addAndMakeVisible(amountSlider);
+    addAndMakeVisible(signalDisplay);
 
     setSize (WIDTH, HEIGHT);
 }
@@ -57,7 +58,9 @@ void EnvelopeMatchAudioProcessorEditor::resized()
     displayBounds = getBounds()
         .removeFromBottom(getHeight() * 0.84f)
         .reduced(getWidth() * 0.01f);
-    
+
+    signalDisplay.setBounds(displayBounds.withHeight(displayBounds.getHeight() * 0.8f));
+
     controlBarBounds = displayBounds
         .removeFromBottom(displayBounds.getHeight() * 0.2f);
 
@@ -74,4 +77,5 @@ void EnvelopeMatchAudioProcessorEditor::resized()
     };
 
     controlBarGrid.performLayout(controlBarBounds);
+
 }

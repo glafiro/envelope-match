@@ -11,6 +11,7 @@
       <FILE id="fLVzQh" name="logo.svg" compile="0" resource="1" file="Resources/logo.svg"/>
     </GROUP>
     <GROUP id="{4989A839-F5FB-6625-35C6-E8795FBA54E7}" name="Source">
+      <FILE id="AjLoEv" name="RingQueue.h" compile="0" resource="0" file="Source/RingQueue.h"/>
       <FILE id="GYfhE8" name="EnvelopeFollower.cpp" compile="1" resource="0"
             file="Source/EnvelopeFollower.cpp"/>
       <FILE id="qGn0Jw" name="EnvelopeFollower.h" compile="0" resource="0"

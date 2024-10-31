@@ -17,6 +17,9 @@ EnvelopeMatchAudioProcessor::EnvelopeMatchAudioProcessor() :
     for (auto& param : apvtsParameters) {
         param->castParameter(apvts);
     }
+
+    envValues.reserve(MAX_ENV_VALUES);
+    waveformValues.reserve(MAX_ENV_VALUES);
 }
 
 EnvelopeMatchAudioProcessor::~EnvelopeMatchAudioProcessor()
@@ -101,6 +104,9 @@ void EnvelopeMatchAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     envFollowerL.prepare(envelopeParameters);
     envFollowerR.prepare(envelopeParameters);
     amount.reset(sampleRate, 0.01f);
+    envSignal.prepare(static_cast<int>(lengthToSamples(sampleRate, DISPLAY_LEN_IN_MS)));
+    mainSignal.prepare(static_cast<int>(lengthToSamples(sampleRate, DISPLAY_LEN_IN_MS)));
+
 }
 
 void EnvelopeMatchAudioProcessor::updateDSP()
@@ -158,20 +164,29 @@ void EnvelopeMatchAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer
         auto inputSamples = mainBuffer.getArrayOfWritePointers();
         auto sidechainSamples = sidechainBuffer.getArrayOfReadPointers();
 
-        
         for (int s = 0; s < nSamples; ++s) {
+            envValues.clear();
+            waveformValues.clear();
+
             auto sampleL = inputSamples[0][s];
             auto sampleR = inputSamples[1][s];
 
             auto envL = envFollowerL.process(sidechainSamples[0][s]);
             auto envR = sideChannels > 1 ? envFollowerR.process(sidechainSamples[1][s]) : envL;
 
+            envValues.push_back((envL + envR) * 0.5f);
+
             float t = amount.getNextValue() * 0.01f;
 
-            inputSamples[0][s] = sampleL * (1.0 - t) + (sampleL * envL) * t;
-            inputSamples[1][s] = sampleR * (1.0 - t) + (sampleR * envR) * t;
-        }
+            auto outL = sampleL * (1.0 - t) + (sampleL * envL) * t;
+            auto outR = sampleR * (1.0 - t) + (sampleR * envR) * t;
 
+            inputSamples[0][s] = outL;
+            inputSamples[1][s] = outR;
+            waveformValues.push_back(fabs((outL + outR) * 0.5f));
+        }
+        envSignal.insert(envValues.data(), envValues.size());
+        mainSignal.insert(waveformValues.data(), waveformValues.size());
     }
 }
 
