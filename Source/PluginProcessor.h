@@ -12,8 +12,8 @@ enum ParameterNames {
 };
 
 static std::array<std::unique_ptr<IAPVTSParameter>, ParameterNames::PARAM_COUNT> apvtsParameters{
-    std::make_unique<APVTSParameterFloat>("attack",  "atk", 0.05f),
-    std::make_unique<APVTSParameterFloat>("release", "rel", 0.05f),
+    std::make_unique<APVTSParameterFloat>("attack",  "atk", 5.0f),
+    std::make_unique<APVTSParameterFloat>("release", "rel", 5.0f),
     std::make_unique<APVTSParameterFloat>("amount",  "amt", 100.0f),
 };
 

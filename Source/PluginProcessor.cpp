@@ -86,7 +86,6 @@ void EnvelopeMatchAudioProcessor::changeProgramName (int index, const juce::Stri
 {
 }
 
-//==============================================================================
 void EnvelopeMatchAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     int nChannels = getTotalNumInputChannels();
